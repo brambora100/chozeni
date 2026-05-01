@@ -21,7 +21,6 @@
     <style>
         :root { 
             --p: #10b981; 
-            --a: #ff5722; 
             --bg: #0f172a; 
             --c: #1e293b; 
             --t: #f8fafc; 
@@ -30,113 +29,126 @@
         
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--t); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- LUXURY AUTH --- */
+        /* AUTH */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 25px; }
-        .auth-card { width: 100%; max-width: 400px; background: var(--c); padding: 40px 30px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        input { width: 100%; padding: 18px; margin: 12px 0; border-radius: 20px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--p); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        .auth-card { width: 100%; max-width: 400px; background: var(--c); padding: 40px 30px; border-radius: 40px; text-align: center; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 18px; margin: 12px 0; border-radius: 20px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 1rem; }
         
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; transition: 0.3s; }
         .btn-p { background: var(--grad); color: white; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+        .btn-s { background: #334155; color: white; margin-top: 10px; }
 
-        /* --- NAVIGATION --- */
-        nav { background: var(--c); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.4); z-index: 1000; }
+        /* NAV & HAMBURGER */
+        nav { background: var(--c); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .nav-title { font-weight: 900; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* --- HAMBURGER MENU --- */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 85%; max-width: 320px; height: 100%; background: #111827; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+        #side-menu { position: fixed; top: 0; left: -100%; width: 85%; max-width: 320px; height: 100%; background: #111827; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
         #side-menu.active { left: 0; }
         .menu-header { padding: 50px 30px 30px; background: var(--c); border-bottom: 1px solid #334155; }
         .menu-user-img { width: 60px; height: 60px; background: var(--grad); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
         .menu-items { padding: 20px; }
-        .menu-item { padding: 18px 20px; display: flex; align-items: center; gap: 15px; border-radius: 18px; margin-bottom: 8px; font-weight: 600; color: #94a3b8; transition: 0.3s; cursor: pointer; }
-        .menu-item i { font-size: 1.2rem; width: 30px; text-align: center; color: var(--p); }
+        .menu-item { padding: 18px 20px; display: flex; align-items: center; gap: 15px; border-radius: 18px; margin-bottom: 8px; font-weight: 600; color: #94a3b8; cursor: pointer; }
+        .menu-item i { width: 30px; text-align: center; color: var(--p); }
         .menu-item.active { background: rgba(16, 185, 129, 0.1); color: var(--p); }
 
-        /* --- SCREENS --- */
-        .screen { display: none; padding: 20px; flex-grow: 1; overflow-y: auto; }
+        /* SCREENS */
+        .screen { display: none; padding: 20px; flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .screen.active { display: flex; flex-direction: column; }
-        #map { height: 320px; border-radius: 35px; margin-bottom: 15px; border: 2px solid #334155; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        #map { height: 320px; border-radius: 35px; margin-bottom: 15px; border: 2px solid #334155; flex-shrink: 0; }
 
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
         .stat-box { background: var(--c); padding: 20px 10px; border-radius: 25px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
         .stat-box span { display: block; font-size: 1.4rem; font-weight: 900; color: var(--p); }
-        .stat-box label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: bold; }
+        .stat-box label { font-size: 0.65rem; color: #64748b; font-weight: bold; text-transform: uppercase; }
 
-        .stats-summary { background: var(--grad); border-radius: 30px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-around; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2); }
-        .summary-item { text-align: center; color: white; }
-        .summary-item b { display: block; font-size: 1.4rem; font-weight: 900; }
-        .summary-item label { font-size: 0.7rem; font-weight: bold; opacity: 0.9; text-transform: uppercase; }
-
+        .stats-summary { background: var(--grad); border-radius: 30px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-around; }
         .history-card { background: var(--c); padding: 20px; border-radius: 25px; margin-bottom: 15px; border-left: 6px solid var(--p); }
-        .mini-map { height: 130px; border-radius: 20px; margin-top: 15px; }
+        .mini-map { height: 130px; border-radius: 20px; margin-top: 15px; background: #0f172a; border: 1px solid #334155; }
         
         #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1900; backdrop-filter: blur(4px); }
-        .debug-bar { font-size: 0.7rem; color: #64748b; text-align: center; margin-bottom: 10px; font-family: monospace; }
+        
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        .loading-text { animation: pulse 1.5s infinite; color: var(--p); font-weight: bold; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
 
+<!-- AUTH SCREEN -->
 <div id="auth-screen">
     <div class="auth-card">
         <div class="menu-user-img" style="margin: 0 auto 20px;"><i class="fas fa-bolt"></i></div>
-        <h1 style="margin:0; font-size: 1.8rem;">VÝZVA 2026</h1>
-        <p style="color: #64748b; margin-bottom: 30px;">Vítej v elitním týmu</p>
-        <input type="email" id="a-email" placeholder="Tvůj e-mail">
-        <input type="password" id="a-pass" placeholder="Tvé heslo">
+        <h1>VÝZVA 2026</h1>
+        <input type="email" id="a-email" placeholder="E-mail">
+        <input type="password" id="a-pass" placeholder="Heslo">
         <button class="btn btn-p" onclick="handleAuth()" id="a-btn">VSTOUPIT</button>
-        <div onclick="toggleAuthMode()" id="a-mode" style="margin-top:20px; color:#94a3b8; cursor:pointer;">Nemáš účet? Registruj se</div>
+        <div onclick="toggleAuthMode()" id="a-mode" style="margin-top:20px; color:#94a3b8; cursor:pointer; font-size: 0.9rem;">Nemáte účet? Registrujte se</div>
     </div>
 </div>
 
+<!-- NAVIGATION -->
 <nav id="main-nav" style="display:none;">
-    <div onclick="toggleMenu()" style="font-size: 1.4rem; color: var(--p); cursor: pointer;"><i class="fas fa-align-left"></i></div>
+    <div onclick="toggleMenu()" style="font-size: 1.5rem; color: var(--p); cursor: pointer;"><i class="fas fa-bars-staggered"></i></div>
     <div class="nav-title">VÝZVA 2026</div>
     <div style="width: 25px;"></div>
 </nav>
 
 <div id="overlay" onclick="toggleMenu()"></div>
 
+<!-- HAMBURGER MENU -->
 <div id="side-menu">
     <div class="menu-header">
         <div class="menu-user-img"><i class="fas fa-user-astronaut"></i></div>
-        <div id="menu-email" style="font-weight: 800; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis;">...</div>
-        <div style="color: var(--p); font-size: 0.8rem; font-weight: bold;">Elitní člen rodiny</div>
+        <div id="menu-email" style="font-weight: 800; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis;">...</div>
+        <div style="color: var(--p); font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-top: 4px;">Aktivní sportovec</div>
     </div>
     <div class="menu-items">
-        <div class="menu-item active" id="m-track" onclick="go('track')"><i class="fas fa-person-walking"></i> Nová trasa</div>
-        <div class="menu-item" id="m-hist" onclick="go('hist')"><i class="fas fa-trophy"></i> Moje výkony</div>
-        <div class="menu-item" id="m-sett" onclick="go('sett')"><i class="fas fa-sliders"></i> Nastavení</div>
-        <div class="menu-item" onclick="logout()" style="color: #ef4444; margin-top: 40px;"><i class="fas fa-power-off"></i> Odhlásit se</div>
+        <div class="menu-item active" id="m-track" onclick="go('track')"><i class="fas fa-person-running"></i> Nová trasa</div>
+        <div class="menu-item" id="m-hist" onclick="go('hist')"><i class="fas fa-trophy"></i> Moje historie</div>
+        <div class="menu-item" id="m-sett" onclick="go('sett')"><i class="fas fa-user-gear"></i> Nastavení účtu</div>
+        <div class="menu-item" onclick="logout()" style="color: #ef4444; margin-top: 30px; border-top: 1px solid #334155; padding-top: 25px;"><i class="fas fa-power-off"></i> Odhlásit se</div>
     </div>
 </div>
 
+<!-- SCREEN: TRACKING -->
 <div id="track" class="screen active">
     <div id="map"></div>
-    <div id="debug" class="debug-bar">Satelit: Připraven k zaměření</div>
     <div class="stat-grid">
         <div class="stat-box"><span id="s-dist">0.00</span><label>KM</label></div>
         <div class="stat-box"><span id="s-time">00:00</span><label>Čas</label></div>
         <div class="stat-box"><span id="s-pts">0</span><label>Body</label></div>
     </div>
-    <button id="startB" class="btn btn-p" style="height: 75px;" onclick="start()">START VÝZVY</button>
-    <button id="stopB" class="btn" style="height: 75px; background: #ef4444; color: white; display: none;" onclick="stop()">STOP A ULOŽIT</button>
+    <button id="startB" class="btn btn-p" style="height: 70px;" onclick="start()">START MĚŘENÍ</button>
+    <button id="stopB" class="btn" style="height: 70px; background: #ef4444; color: white; display: none;" onclick="stop()">UKONČIT A ULOŽIT</button>
 </div>
 
+<!-- SCREEN: HISTORY -->
 <div id="hist" class="screen">
     <div class="stats-summary">
-        <div class="summary-item"><b id="sum-km">0.0</b><label>KM Celkem</label></div>
-        <div class="summary-item"><b id="sum-pts">0</b><label>Body</label></div>
+        <div class="summary-item" style="text-align: center; color: white;"><b id="sum-km" style="font-size: 1.5rem; display: block;">0.0</b><label style="font-size: 0.7rem; opacity: 0.8; font-weight: bold;">KM CELKEM</label></div>
+        <div class="summary-item" style="text-align: center; color: white;"><b id="sum-pts" style="font-size: 1.5rem; display: block;">0</b><label style="font-size: 0.7rem; opacity: 0.8; font-weight: bold;">BODY CELKEM</label></div>
     </div>
     <div id="hist-list"></div>
 </div>
 
+<!-- SCREEN: SETTINGS -->
 <div id="sett" class="screen">
-    <h2 style="margin-left: 10px;">Nastavení</h2>
-    <div class="auth-card" style="box-shadow:none; width:auto;">
-        <label style="color:#64748b; font-size:0.8rem; display:block; text-align:left; margin-left:10px;">E-mail</label>
-        <input type="email" id="new-email">
-        <button class="btn btn-p" onclick="updateEmail()">Uložit změny</button>
+    <h2 style="margin-bottom: 20px;">Nastavení profilu</h2>
+    
+    <div class="history-card" style="border-left-color: #3b82f6;">
+        <h3 style="margin-top:0; font-size: 1rem;"><i class="fas fa-envelope" style="margin-right:10px;"></i>Změna e-mailu</h3>
+        <input type="email" id="set-email" placeholder="Nový e-mail">
+        <button class="btn btn-p" onclick="updateUserEmail()">Aktualizovat e-mail</button>
+    </div>
+
+    <div class="history-card" style="border-left-color: #a855f7;">
+        <h3 style="margin-top:0; font-size: 1rem;"><i class="fas fa-lock" style="margin-right:10px;"></i>Změna hesla</h3>
+        <input type="password" id="set-pass1" placeholder="Nové heslo">
+        <input type="password" id="set-pass2" placeholder="Heslo znovu">
+        <button class="btn btn-p" style="background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);" onclick="updateUserPassword()">Změnit heslo</button>
+    </div>
+
+    <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.8rem;">
+        ID uživatele: <span id="user-id-display">...</span>
     </div>
 </div>
 
@@ -155,21 +167,40 @@
 
     let map, path, userMarker, watch, last, dist = 0, coords = [], user, isReg = false, startTime, timerInt;
 
-    function toggleAuthMode() { isReg = !isReg; document.getElementById('a-btn').innerText = isReg ? "REGISTROVAT" : "VSTOUPIT"; }
+    // AUTH LOGIC
+    function toggleAuthMode() { 
+        isReg = !isReg; 
+        document.getElementById('a-btn').innerText = isReg ? "REGISTROVAT SE" : "VSTOUPIT";
+        document.getElementById('a-mode').innerText = isReg ? "Již máte účet? Přihlaste se" : "Nemáte účet? Registrujte se";
+    }
+
     async function handleAuth() {
         const e = document.getElementById('a-email').value, p = document.getElementById('a-pass').value;
+        if(!e || !p) return alert("Vyplňte e-mail a heslo");
         try { isReg ? await auth.createUserWithEmailAndPassword(e, p) : await auth.signInWithEmailAndPassword(e, p); }
         catch (err) { alert(err.message); }
     }
-    auth.onAuthStateChanged(u => {
-        if (u) { user = u; document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('menu-email').innerText = u.email; initMap(); }
-    });
-    function logout() { auth.signOut(); location.reload(); }
 
+    auth.onAuthStateChanged(u => {
+        if (u) { 
+            user = u; 
+            document.getElementById('auth-screen').style.display = 'none'; 
+            document.getElementById('main-nav').style.display = 'flex'; 
+            document.getElementById('menu-email').innerText = u.email; 
+            document.getElementById('set-email').value = u.email;
+            document.getElementById('user-id-display').innerText = u.uid;
+            initMap(); 
+        }
+    });
+
+    function logout() { auth.signOut().then(() => location.reload()); }
+
+    // UI LOGIC
     function toggleMenu() {
-        document.getElementById('side-menu').classList.toggle('active');
-        const o = document.getElementById('overlay');
-        o.style.display = o.style.display === 'block' ? 'none' : 'block';
+        const menu = document.getElementById('side-menu');
+        const overlay = document.getElementById('overlay');
+        menu.classList.toggle('active');
+        overlay.style.display = menu.classList.contains('active') ? 'block' : 'none';
     }
 
     function go(id) {
@@ -177,18 +208,18 @@
         document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.getElementById('m-' + id).classList.add('active');
-        toggleMenu();
+        if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
         if (id === 'hist') loadHist();
     }
 
+    // MAP & TRACKING
     function initMap() {
         if (map) return;
-        map = L.map('map', {zoomControl:false}).setView([50, 14], 15);
+        map = L.map('map', {zoomControl:false}).setView([50.08, 14.43], 15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(map);
         path = L.polyline([], {color: '#10b981', weight: 6}).addTo(map);
-        userMarker = L.circleMarker([50, 14], { radius: 9, fillColor: "#ff5722", color: "#fff", weight: 3, fillOpacity: 1 }).addTo(map);
+        userMarker = L.circleMarker([50.08, 14.43], { radius: 9, fillColor: "#ff5722", color: "#fff", weight: 3, fillOpacity: 1 }).addTo(map);
         
-        // Okamžitý Focus GPS
         navigator.geolocation.getCurrentPosition(p => {
             const pos = [p.coords.latitude, p.coords.longitude];
             map.setView(pos, 18); userMarker.setLatLng(pos);
@@ -199,34 +230,25 @@
         dist = 0; coords = []; last = null; startTime = Date.now();
         document.getElementById('startB').style.display = 'none';
         document.getElementById('stopB').style.display = 'block';
-        document.getElementById('debug').innerText = "GPS aktivní - pohyb zaznamenáván...";
-
         timerInt = setInterval(() => {
             const sec = Math.floor((Date.now() - startTime) / 1000);
             document.getElementById('s-time').innerText = new Date(sec * 1000).toISOString().substr(14, 5);
         }, 1000);
 
-        // CENTIMETROVÁ PŘESNOST (Tolerance 1m pro schody)
         watch = navigator.geolocation.watchPosition(p => {
             const cur = L.latLng(p.coords.latitude, p.coords.longitude);
             userMarker.setLatLng(cur);
             if (last) {
                 let d = last.distanceTo(cur);
-                // Nastaveno na 1 metr pro maximální citlivost
-                if (d > 1.0) {
+                if (d > 1.5) { 
                     dist += d; coords.push([p.coords.latitude, p.coords.longitude]);
                     path.setLatLngs(coords); map.panTo(cur);
-                    document.getElementById('debug').innerText = `Pohyb: +${d.toFixed(1)}m | Celkem: ${dist.toFixed(1)}m`;
                 }
             }
             last = cur;
             document.getElementById('s-dist').innerText = (dist/1000).toFixed(2);
             document.getElementById('s-pts').innerText = Math.floor((dist/1000) * 10);
-        }, null, {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 5000
-        });
+        }, null, {enableHighAccuracy: true, maximumAge: 0});
     }
 
     async function stop() {
@@ -238,40 +260,81 @@
                 cas: document.getElementById('s-time').innerText, trasa: JSON.stringify(coords),
                 datum: firebase.firestore.FieldValue.serverTimestamp()
             });
-            alert("Výkon 2026 uložen!");
+            alert("Výkon uložen do historie!");
         }
         location.reload();
     }
 
+    // HISTORY LOAD
     async function loadHist() {
         const list = document.getElementById('hist-list');
-        list.innerHTML = "<p style='text-align:center'>Načítám data 2026...</p>";
-        const snap = await db.collection("aktivity").where("uid", "==", user.uid).orderBy("datum", "desc").get();
-        let totalKm = 0, totalPts = 0;
-        list.innerHTML = "";
-        snap.forEach(doc => {
-            const d = doc.data();
-            totalKm += d.vzdalenost; totalPts += d.body;
-            const date = d.datum ? d.datum.toDate() : new Date();
-            list.innerHTML += `<div class="history-card">
-                <div style="display:flex; justify-content:space-between; font-weight:900;">
-                    <span>${d.vzdalenost} km</span><span style="color:var(--p);">+${d.body} b</span>
-                </div>
-                <div style="color:#64748b; font-size:0.8rem; margin-top:5px;">${date.toLocaleDateString()} | ${d.cas}</div>
-                <div id="m-${doc.id}" class="mini-map"></div>
-            </div>`;
-            setTimeout(() => {
-                const m = L.map(`m-${doc.id}`, {zoomControl:false, attributionControl:false}).setView([50,14], 15);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(m);
-                const tr = JSON.parse(d.trasa || "[]");
-                if (tr.length > 0) { const p = L.polyline(tr, {color: '#10b981', weight: 4}).addTo(m); m.fitBounds(p.getBounds()); }
-            }, 400);
-        });
-        document.getElementById('sum-km').innerText = totalKm.toFixed(1);
-        document.getElementById('sum-pts').innerText = totalPts;
+        list.innerHTML = "<p class='loading-text'>Načítám tvé výkony...</p>";
+        
+        try {
+            let snap;
+            try {
+                snap = await db.collection("aktivity").where("uid", "==", user.uid).orderBy("datum", "desc").get();
+            } catch (e) {
+                snap = await db.collection("aktivity").where("uid", "==", user.uid).get();
+            }
+
+            let tk = 0, tp = 0, docs = [];
+            list.innerHTML = "";
+            snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
+            docs.sort((a, b) => (b.datum?.seconds || 0) - (a.datum?.seconds || 0));
+
+            if (docs.length === 0) { list.innerHTML = "<p style='text-align:center; color:#64748b; margin-top:30px;'>Zatím tu nic není. Vyraz ven!</p>"; return; }
+
+            docs.forEach(d => {
+                tk += d.vzdalenost; tp += d.body;
+                const dt = d.datum ? d.datum.toDate() : new Date();
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between"><b>${d.vzdalenost} km</b><b style="color:var(--p)">+${d.body} b</b></div>
+                    <div style="font-size:0.75rem; color:#64748b; margin: 5px 0 12px 0;">${dt.toLocaleDateString('cs-CZ')} | ${d.cas}</div>
+                    <div id="m-${d.id}" class="mini-map"></div>
+                `;
+                list.appendChild(card);
+
+                setTimeout(() => {
+                    const m = L.map(`m-${d.id}`, {zoomControl:false, attributionControl:false}).setView([50,14], 15);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(m);
+                    const tr = JSON.parse(d.trasa || "[]");
+                    if (tr.length > 0) { 
+                        const p = L.polyline(tr, {color: '#10b981', weight: 4}).addTo(m); 
+                        m.fitBounds(p.getBounds(), {padding:[10,10]}); 
+                    }
+                }, 300);
+            });
+            document.getElementById('sum-km').innerText = tk.toFixed(1);
+            document.getElementById('sum-pts').innerText = tp;
+        } catch(e) { list.innerHTML = "<p>Chyba načítání dat.</p>"; }
     }
 
-    async function updateEmail() { try { await user.updateEmail(document.getElementById('new-email').value); alert("Změněno!"); } catch(e) { alert("Chyba: " + e.message); } }
+    // SETTINGS ACTIONS
+    async function updateUserEmail() {
+        const newMail = document.getElementById('set-email').value;
+        if(!newMail) return;
+        try {
+            await user.updateEmail(newMail);
+            alert("E-mail byl úspěšně změněn.");
+            location.reload();
+        } catch(e) { alert("Chyba: " + e.message + " (Pravděpodobně se musíte znovu přihlásit)"); }
+    }
+
+    async function updateUserPassword() {
+        const p1 = document.getElementById('set-pass1').value;
+        const p2 = document.getElementById('set-pass2').value;
+        if(p1 !== p2) return alert("Hesla se neshodují!");
+        if(p1.length < 6) return alert("Heslo musí mít aspoň 6 znaků.");
+        try {
+            await user.updatePassword(p1);
+            alert("Heslo bylo úspěšně změněno.");
+            document.getElementById('set-pass1').value = "";
+            document.getElementById('set-pass2').value = "";
+        } catch(e) { alert("Chyba: " + e.message + " (Změna hesla vyžaduje čerstvé přihlášení)"); }
+    }
 </script>
 </body>
 </html>
