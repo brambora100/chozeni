@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rodinná Výzva Ultra</title>
 
-    <!-- iOS PWA SETTINGS -->
+    <!-- iOS APP SETTINGS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Výzva 2024">
@@ -19,87 +19,109 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { --p: #10b981; --a: #ff5722; --bg: #0f172a; --c: #1e293b; --t: #f8fafc; --grad: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        :root { 
+            --p: #10b981; 
+            --a: #ff5722; 
+            --bg: #0f172a; 
+            --c: #1e293b; 
+            --t: #f8fafc; 
+            --grad: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+        }
         
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--t); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--t); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- AUTH --- */
+        /* --- LUXURY AUTH --- */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 25px; }
         .auth-card { width: 100%; max-width: 400px; background: var(--c); padding: 40px 30px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        input { width: 100%; padding: 18px; margin: 12px 0; border-radius: 20px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 1rem; outline: none; }
-
-        /* --- UI COMPONENTS --- */
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; text-transform: uppercase; margin-top: 10px; }
-        .btn-p { background: var(--grad); color: white; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+        input { width: 100%; padding: 18px; margin: 12px 0; border-radius: 20px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--p); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
         
-        nav { background: var(--c); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        .nav-title { font-weight: 900; font-size: 1.2rem; color: var(--p); }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-p { background: var(--grad); color: white; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+        .btn-p:active { transform: scale(0.98); }
 
-        /* --- MENU --- */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 85%; max-width: 320px; height: 100%; background: #111827; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+        /* --- NAVIGATION --- */
+        nav { background: var(--c); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.4); z-index: 1000; }
+        .nav-title { font-weight: 900; font-size: 1.2rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- PROPRACONTANÉ HAMBURGER MENU --- */
+        #side-menu { position: fixed; top: 0; left: -100%; width: 85%; max-width: 320px; height: 100%; background: #111827; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
         #side-menu.active { left: 0; }
         .menu-header { padding: 50px 30px 30px; background: var(--c); border-bottom: 1px solid #334155; }
         .menu-user-img { width: 60px; height: 60px; background: var(--grad); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
-        .menu-item { padding: 18px 30px; display: flex; align-items: center; gap: 15px; font-weight: 600; color: #94a3b8; cursor: pointer; }
-        .menu-item.active { color: white; background: rgba(16, 185, 129, 0.1); }
-        .menu-item i { color: var(--p); }
+        .menu-items { padding: 20px; }
+        .menu-item { padding: 18px 20px; display: flex; align-items: center; gap: 15px; border-radius: 18px; margin-bottom: 8px; font-weight: 600; color: #94a3b8; transition: 0.3s; cursor: pointer; }
+        .menu-item i { font-size: 1.2rem; width: 30px; text-align: center; color: var(--p); }
+        .menu-item.active { background: rgba(16, 185, 129, 0.1); color: var(--p); }
 
         /* --- SCREENS --- */
         .screen { display: none; padding: 20px; flex-grow: 1; overflow-y: auto; }
         .screen.active { display: flex; flex-direction: column; }
-        #map { height: 300px; min-height: 300px; border-radius: 35px; margin-bottom: 15px; border: 2px solid #334155; }
+        #map { height: 320px; border-radius: 35px; margin-bottom: 20px; border: 2px solid #334155; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
 
-        /* --- STATS --- */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: var(--c); padding: 15px 5px; border-radius: 22px; text-align: center; }
-        .stat-box span { display: block; font-size: 1.3rem; font-weight: 900; color: var(--p); }
-        .stat-box label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; }
+        /* --- STATS SUMMARY (Novinka v původním stylu) --- */
+        .stats-summary { background: var(--grad); border-radius: 30px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-around; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2); }
+        .summary-item { text-align: center; color: white; }
+        .summary-item b { display: block; font-size: 1.4rem; font-weight: 900; }
+        .summary-item label { font-size: 0.7rem; font-weight: bold; opacity: 0.9; text-transform: uppercase; }
 
-        /* --- FIX PRO NASTAVENÍ --- */
-        .settings-group { background: var(--c); border-radius: 25px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.03); }
-        .settings-group label { display: block; color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; text-align: left; }
-        .settings-group input { margin-bottom: 15px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .stat-box { background: var(--c); padding: 20px 10px; border-radius: 25px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
+        .stat-box span { display: block; font-size: 1.4rem; font-weight: 900; color: var(--p); }
+        .stat-box label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: bold; }
+
+        /* --- SETTINGS FIX --- */
+        .settings-group { background: var(--c); border-radius: 30px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.03); }
+        .settings-group h3 { margin-top: 0; font-size: 1rem; color: #94a3b8; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .settings-group label { display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px; margin-left: 5px; }
 
         .history-card { background: var(--c); padding: 20px; border-radius: 25px; margin-bottom: 15px; border-left: 6px solid var(--p); }
         .mini-map { height: 130px; border-radius: 20px; margin-top: 15px; }
+        
         #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1900; backdrop-filter: blur(4px); }
+        .filter-select { background: #0f172a; color: white; border: 1px solid #334155; padding: 15px; border-radius: 20px; margin-bottom: 20px; width: 100%; outline: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
+<!-- AUTH -->
 <div id="auth-screen">
     <div class="auth-card">
-        <h1 id="t-title" style="margin:0; color: var(--p);">Rodinná Výzva</h1>
-        <p id="t-desc" style="color: #64748b; margin-bottom: 25px;">Změř své síly s rodinou</p>
-        <input type="email" id="a-email" placeholder="E-mail">
-        <input type="password" id="a-pass" placeholder="Heslo">
+        <div class="menu-user-img" style="margin: 0 auto 20px;"><i class="fas fa-bolt"></i></div>
+        <h1 id="t-title" style="margin:0; font-size: 1.8rem;">Vítej zpět</h1>
+        <p style="color: #64748b; margin-bottom: 30px;">Přihlas se do rodinné výzvy</p>
+        <input type="email" id="a-email" placeholder="Tvůj e-mail">
+        <input type="password" id="a-pass" placeholder="Tvé heslo">
         <button class="btn btn-p" onclick="handleAuth()" id="a-btn">PŘIHLÁSIT SE</button>
-        <div class="auth-toggle" onclick="toggleAuthMode()" id="a-mode">Nemáš účet? Zaregistruj se</div>
-        <p id="a-err" style="color: #ef4444; font-size: 0.8rem; margin-top: 15px;"></p>
+        <div onclick="toggleAuthMode()" id="a-mode" style="margin-top:20px; color:#94a3b8; cursor:pointer; text-decoration:underline;">Nemáš účet? Registruj se</div>
     </div>
 </div>
 
+<!-- NAV -->
 <nav id="main-nav" style="display:none;">
-    <div onclick="toggleMenu()" style="font-size: 1.5rem; color: var(--p); cursor: pointer;"><i class="fas fa-bars"></i></div>
+    <div onclick="toggleMenu()" style="font-size: 1.4rem; color: var(--p); cursor: pointer;"><i class="fas fa-align-left"></i></div>
     <div class="nav-title">VÝZVA 2024</div>
-    <div style="width: 20px;"></div>
+    <div style="width: 25px;"></div>
 </nav>
 
 <div id="overlay" onclick="toggleMenu()"></div>
 
+<!-- HAMBURGER MENU (Zpět v plné kráse) -->
 <div id="side-menu">
     <div class="menu-header">
-        <div class="menu-user-img"><i class="fas fa-walking"></i></div>
-        <div id="menu-email" style="font-weight: 800; font-size: 1rem; overflow: hidden; text-overflow: ellipsis;">...</div>
+        <div class="menu-user-img"><i class="fas fa-user-astronaut"></i></div>
+        <div id="menu-email" style="font-weight: 800; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis;">...</div>
+        <div style="color: var(--p); font-size: 0.8rem; font-weight: bold;">Elitní člen rodiny</div>
     </div>
-    <div style="padding-top: 10px;">
-        <div class="menu-item active" id="m-track" onclick="go('track')"><i class="fas fa-play"></i> Nová trasa</div>
-        <div class="menu-item" id="m-hist" onclick="go('hist')"><i class="fas fa-history"></i> Historie</div>
-        <div class="menu-item" id="m-sett" onclick="go('sett')"><i class="fas fa-cog"></i> Nastavení</div>
-        <div class="menu-item" onclick="logout()" style="color: #ef4444; margin-top: 30px;"><i class="fas fa-sign-out-alt"></i> Odhlásit se</div>
+    <div class="menu-items">
+        <div class="menu-item active" id="m-track" onclick="go('track')"><i class="fas fa-person-walking"></i> Nová trasa</div>
+        <div class="menu-item" id="m-hist" onclick="go('hist')"><i class="fas fa-trophy"></i> Moje výkony</div>
+        <div class="menu-item" id="m-sett" onclick="go('sett')"><i class="fas fa-sliders"></i> Nastavení</div>
+        <div class="menu-item" onclick="logout()" style="color: #ef4444; margin-top: 40px;"><i class="fas fa-power-off"></i> Odhlásit se</div>
     </div>
 </div>
 
+<!-- SCREEN: TRACK -->
 <div id="track" class="screen active">
     <div id="map"></div>
     <div class="stat-grid">
@@ -107,26 +129,38 @@
         <div class="stat-box"><span id="s-time">00:00</span><label>Čas</label></div>
         <div class="stat-box"><span id="s-pts">0</span><label>Body</label></div>
     </div>
-    <button id="startB" class="btn btn-p" style="height: 70px;" onclick="start()">START CHŮZE</button>
-    <button id="stopB" class="btn" style="height: 70px; background: #ef4444; color: white; display: none;" onclick="stop()">STOP A ULOŽIT</button>
+    <button id="startB" class="btn btn-p" style="height: 75px;" onclick="start()">START VÝZVY</button>
+    <button id="stopB" class="btn" style="height: 75px; background: #ef4444; color: white; display: none;" onclick="stop()">STOP A ULOŽIT</button>
 </div>
 
+<!-- SCREEN: HISTORY -->
 <div id="hist" class="screen">
-    <h2 style="margin-bottom: 20px;">Moje výkony</h2>
+    <div class="stats-summary">
+        <div class="summary-item"><b id="sum-km">0.0</b><label>KM Celkem</label></div>
+        <div class="summary-item"><b id="sum-time">0h 0m</b><label>Celý Čas</label></div>
+        <div class="summary-item"><b id="sum-pts">0</b><label>Body</label></div>
+    </div>
+    <select class="filter-select" id="month-filter" onchange="loadHist()">
+        <option value="current">Tento měsíc</option>
+        <option value="all">Všechny výkony</option>
+    </select>
     <div id="hist-list"></div>
 </div>
 
+<!-- SCREEN: SETTINGS -->
 <div id="sett" class="screen">
-    <h2 style="margin-bottom: 20px;">Nastavení účtu</h2>
+    <h2 style="margin-left: 10px;">Nastavení</h2>
     <div class="settings-group">
-        <label><i class="fas fa-envelope"></i> Změna e-mailu</label>
-        <input type="email" id="new-email" placeholder="Nový e-mail">
-        <button class="btn btn-p" style="padding: 14px;" onclick="updateEmail()">Uložit e-mail</button>
+        <h3><i class="fas fa-envelope"></i> Účet</h3>
+        <label>E-mailová adresa</label>
+        <input type="email" id="new-email">
+        <button class="btn btn-p" style="padding: 12px;" onclick="updateEmail()">Aktualizovat e-mail</button>
     </div>
     <div class="settings-group">
-        <label><i class="fas fa-lock"></i> Změna hesla</label>
+        <h3><i class="fas fa-lock"></i> Zabezpečení</h3>
+        <label>Nové heslo</label>
         <input type="password" id="n-pass" placeholder="Min. 6 znaků">
-        <button class="btn btn-p" style="padding: 14px; background: #334155;" onclick="upPass()">Změnit heslo</button>
+        <button class="btn btn-p" style="padding: 12px; background: #334155;" onclick="upPass()">Změnit heslo</button>
     </div>
 </div>
 
@@ -145,37 +179,21 @@
 
     let map, path, userMarker, watch, last, dist = 0, coords = [], user, isReg = false, startTime, timerInt;
 
-    function toggleAuthMode() {
-        isReg = !isReg;
-        document.getElementById('t-title').innerText = isReg ? "Registrace" : "Rodinná Výzva";
-        document.getElementById('a-btn').innerText = isReg ? "VYTVOŘIT ÚČET" : "PŘIHLÁSIT SE";
-    }
-
+    function toggleAuthMode() { isReg = !isReg; document.getElementById('a-btn').innerText = isReg ? "REGISTROVAT" : "PŘIHLÁSIT SE"; }
     async function handleAuth() {
         const e = document.getElementById('a-email').value, p = document.getElementById('a-pass').value;
-        try {
-            if (isReg) await auth.createUserWithEmailAndPassword(e, p);
-            else await auth.signInWithEmailAndPassword(e, p);
-        } catch (err) { document.getElementById('a-err').innerText = err.message; }
+        try { isReg ? await auth.createUserWithEmailAndPassword(e, p) : await auth.signInWithEmailAndPassword(e, p); }
+        catch (err) { alert(err.message); }
     }
-
     auth.onAuthStateChanged(u => {
-        if (u) {
-            user = u;
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('menu-email').innerText = u.email;
-            document.getElementById('new-email').value = u.email;
-            initMap();
-        }
+        if (u) { user = u; document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('menu-email').innerText = u.email; initMap(); }
     });
-
     function logout() { auth.signOut(); location.reload(); }
 
     function toggleMenu() {
         document.getElementById('side-menu').classList.toggle('active');
         const o = document.getElementById('overlay');
-        o.style.display = (o.style.display === 'block') ? 'none' : 'block';
+        o.style.display = o.style.display === 'block' ? 'none' : 'block';
     }
 
     function go(id) {
@@ -194,8 +212,8 @@
         path = L.polyline([], {color: '#10b981', weight: 6}).addTo(map);
         userMarker = L.circleMarker([50, 14], { radius: 9, fillColor: "#ff5722", color: "#fff", weight: 3, fillOpacity: 1 }).addTo(map);
         navigator.geolocation.getCurrentPosition(p => {
-            map.setView([p.coords.latitude, p.coords.longitude], 16);
-            userMarker.setLatLng([p.coords.latitude, p.coords.longitude]);
+            const pos = [p.coords.latitude, p.coords.longitude];
+            map.setView(pos, 16); userMarker.setLatLng(pos);
         });
     }
 
@@ -212,11 +230,9 @@
             userMarker.setLatLng(cur);
             if (last) {
                 let d = last.distanceTo(cur);
-                if (d > 3) {
-                    dist += d;
-                    coords.push([p.coords.latitude, p.coords.longitude]);
-                    path.setLatLngs(coords);
-                    map.panTo(cur);
+                if (d > 2) {
+                    dist += d; coords.push([p.coords.latitude, p.coords.longitude]);
+                    path.setLatLngs(coords); map.panTo(cur);
                 }
             }
             last = cur;
@@ -226,15 +242,12 @@
     }
 
     async function stop() {
-        clearInterval(timerInt);
-        navigator.geolocation.clearWatch(watch);
-        if (dist > 5) {
+        clearInterval(timerInt); navigator.geolocation.clearWatch(watch);
+        const finalKm = parseFloat((dist/1000).toFixed(2));
+        if (finalKm > 0.01) {
             await db.collection("aktivity").add({
-                uid: user.uid,
-                vzdalenost: parseFloat((dist/1000).toFixed(2)),
-                body: Math.floor((dist/1000) * 10),
-                cas: document.getElementById('s-time').innerText,
-                trasa: JSON.stringify(coords),
+                uid: user.uid, vzdalenost: finalKm, body: Math.floor(finalKm * 10),
+                cas: document.getElementById('s-time').innerText, trasa: JSON.stringify(coords),
                 datum: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
@@ -243,40 +256,43 @@
 
     async function loadHist() {
         const list = document.getElementById('hist-list');
+        list.innerHTML = "<p style='text-align:center'>Načítám...</p>";
+        const snap = await db.collection("aktivity").where("uid", "==", user.uid).orderBy("datum", "desc").get();
+        
+        let totalKm = 0, totalMin = 0, totalPts = 0;
+        const filter = document.getElementById('month-filter').value;
+        const now = new Date();
+        
         list.innerHTML = "";
-        const snap = await db.collection("aktivity").where("uid", "==", user.uid).orderBy("datum", "desc").limit(10).get();
         snap.forEach(doc => {
             const d = doc.data();
-            const id = doc.id;
-            list.innerHTML += `
-                <div class="history-card">
-                    <div style="display:flex; justify-content:space-between; font-weight:900;">
-                        <span>${d.vzdalenost} km</span>
-                        <span style="color:var(--p);">+${d.body} b</span>
-                    </div>
-                    <div style="font-size:0.8rem; color:#64748b;">${d.datum ? d.datum.toDate().toLocaleDateString() : ""} | ${d.cas}</div>
-                    <div id="map-${id}" class="mini-map"></div>
-                </div>`;
+            const date = d.datum ? d.datum.toDate() : new Date();
+            if (filter === 'current' && (date.getMonth() !== now.getMonth() || date.getFullYear() !== now.getFullYear())) return;
+
+            totalKm += d.vzdalenost; totalPts += d.body;
+            const t = d.cas.split(":"); totalMin += parseInt(t[0])*60 + parseInt(t[1]);
+
+            list.innerHTML += `<div class="history-card">
+                <div style="display:flex; justify-content:space-between; font-weight:900; font-size:1.1rem;">
+                    <span>${d.vzdalenost} km</span><span style="color:var(--p);">+${d.body} b</span>
+                </div>
+                <div style="color:#64748b; font-size:0.8rem; margin-top:5px;">${date.toLocaleDateString()} | ${d.cas}</div>
+                <div id="map-${doc.id}" class="mini-map"></div>
+            </div>`;
             setTimeout(() => {
-                const m = L.map(`map-${id}`, {zoomControl:false, attributionControl:false}).setView([50, 14], 15);
+                const m = L.map(`map-${doc.id}`, {zoomControl:false, attributionControl:false}).setView([50,14], 15);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(m);
-                const t = JSON.parse(d.trasa || "[]");
-                if (t.length > 0) {
-                    const p = L.polyline(t, {color: '#10b981', weight: 4}).addTo(m);
-                    m.fitBounds(p.getBounds(), {padding: [10, 10]});
-                }
-            }, 300);
+                const tr = JSON.parse(d.trasa || "[]");
+                if (tr.length > 0) { const p = L.polyline(tr, {color: '#10b981', weight: 4}).addTo(m); m.fitBounds(p.getBounds(), {padding:[5,5]}); }
+            }, 400);
         });
+        document.getElementById('sum-km').innerText = totalKm.toFixed(1);
+        document.getElementById('sum-pts').innerText = totalPts;
+        document.getElementById('sum-time').innerText = Math.floor(totalMin/60) + "h " + (totalMin%60) + "m";
     }
 
-    async function updateEmail() {
-        try { await user.updateEmail(document.getElementById('new-email').value); alert("Email změněn!"); } 
-        catch (e) { alert("Musíš se znovu přihlásit."); }
-    }
-    async function upPass() {
-        try { await user.updatePassword(document.getElementById('n-pass').value); alert("Heslo změněno!"); } 
-        catch (e) { alert(e.message); }
-    }
+    async function updateEmail() { try { await user.updateEmail(document.getElementById('new-email').value); alert("Změněno!"); } catch(e) { alert("Přihlas se znovu."); } }
+    async function upPass() { try { await user.updatePassword(document.getElementById('n-pass').value); alert("Změněno!"); } catch(e) { alert(e.message); } }
 </script>
 </body>
 </html>
