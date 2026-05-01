@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard | Výzva 2026</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Mapy a Ikony -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --p: #10b981; 
+            --bg: #0f172a; 
+            --c: #1e293b; 
+            --t: #f8fafc; 
+            --danger: #ef4444;
+            --grad: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: var(--bg); 
+            color: var(--t); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh;
+        }
+
+        /* --- AUTH SCREEN --- */
+        #auth-screen { 
+            position: fixed; inset: 0; background: var(--bg); z-index: 3000; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+        .auth-box { 
+            background: var(--c); padding: 40px; border-radius: 35px; 
+            width: 90%; max-width: 380px; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- HEADER --- */
+        header { 
+            background: var(--c); padding: 20px; 
+            border-bottom: 2px solid var(--p);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .nav-title { font-weight: 900; letter-spacing: 1px; color: var(--p); font-size: 1.1rem; }
+        
+        .stats-strip { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;
+        }
+        .small-stat { background: #0f172a; padding: 10px; border-radius: 15px; text-align: center; }
+        .small-stat b { display: block; color: var(--p); font-size: 1.2rem; }
+        .small-stat label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; }
+
+        .filter-row { display: flex; gap: 10px; }
+        .input-ui { 
+            background: #0f172a; color: white; border: 1px solid #334155; 
+            padding: 12px; border-radius: 12px; outline: none; flex-grow: 1; font-size: 0.9rem;
+        }
+
+        /* --- CONTENT --- */
+        .content { padding: 20px; flex-grow: 1; overflow-y: auto; }
+        .user-card { 
+            background: var(--c); border-radius: 28px; padding: 25px; 
+            margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.2s;
+        }
+        .u-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .u-info { flex-grow: 1; }
+        .u-mail { font-weight: 800; font-size: 1.1rem; color: #fff; word-break: break-all; }
+        .u-id { font-size: 0.65rem; color: #64748b; font-family: monospace; }
+        .u-total { text-align: right; }
+        .u-km { font-size: 1.6rem; font-weight: 900; color: var(--p); line-height: 1; }
+        .u-pts { font-size: 0.8rem; color: #64748b; font-weight: bold; }
+
+        /* --- TRACKS --- */
+        .track-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .track-item { 
+            background: #0f172a; border-radius: 18px; padding: 15px; 
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .mini-map { height: 180px; border-radius: 14px; margin-top: 10px; }
+
+        .btn { 
+            padding: 14px; border: none; border-radius: 14px; 
+            font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 0.8rem;
+        }
+        .btn-reset { 
+            background: rgba(239, 68, 68, 0.1); color: var(--danger); 
+            border: 1px solid rgba(239, 68, 68, 0.2); width: 100%;
+        }
+        .btn-reset:hover { background: var(--danger); color: white; }
+
+        .loading-spinner { text-align: center; padding: 40px; color: var(--p); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box">
+        <div style="font-size: 3rem; color: var(--p); margin-bottom: 10px;"><i class="fas fa-user-shield"></i></div>
+        <h2 style="margin-bottom: 5px;">ADMIN PANEL</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 25px;">Vstup povolen pouze správcům</p>
+        <input type="email" id="adm-e" class="input-ui" placeholder="E-mail" style="margin-bottom:10px;">
+        <input type="password" id="adm-p" class="input-ui" placeholder="Heslo" style="margin-bottom:20px;">
+        <button class="btn" style="background: var(--grad); color: white; width: 100%;" onclick="adminLogin()">PŘIHLÁSIT SE</button>
+    </div>
+</div>
+
+<header id="h-panel" style="display:none;">
+    <div class="nav-top">
+        <div class="nav-title"><i class="fas fa-chart-line" style="margin-right:8px;"></i>VÝZVA 2026</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <i class="fas fa-sync" onclick="fetchData()" style="cursor:pointer; color: #64748b;"></i>
+            <i class="fas fa-sign-out-alt" onclick="logout()" style="cursor:pointer; color: var(--danger);"></i>
+        </div>
+    </div>
+
+    <div class="stats-strip">
+        <div class="small-stat"><b id="total-km-sum">0.0</b><label>Km Rodina</label></div>
+        <div class="small-stat"><b id="total-users-sum">0</b><label>Uživatelů</label></div>
+    </div>
+
+    <div class="filter-row">
+        <input type="text" id="search" class="input-ui" placeholder="Hledat člena rodiny..." oninput="render()">
+        <select id="sort" class="input-ui" onchange="render()" style="flex-grow:0; width: 110px;">
+            <option value="max">Nejvíc km</option>
+            <option value="abc">Podle jména</option>
+        </select>
+    </div>
+</header>
+
+<div class="content" id="c-panel" style="display:none;">
+    <div id="user-list">
+        <div class="loading-spinner">Načítám data z Cloudu...</div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Konfigurace (stejná jako v tvé aplikaci)
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNrZQJDgTITduIm62uTU1QTaDLBMZ9hws",
+        authDomain: "donutgamba.firebaseapp.com",
+        projectId: "donutgamba",
+        storageBucket: "donutgamba.firebasestorage.app",
+        messagingSenderId: "785116130586",
+        appId: "1:785116130586:web:e7a4c72b9fed8a9efdd0a3"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth(), db = firebase.firestore();
+
+    let allUsers = [];
+
+    async function adminLogin() {
+        const e = document.getElementById('adm-e').value, p = document.getElementById('adm-p').value;
+        try { await auth.signInWithEmailAndPassword(e, p); } 
+        catch(err) { alert("Přístup zamítnut: " + err.message); }
+    }
+
+    function logout() { auth.signOut().then(() => location.reload()); }
+
+    auth.onAuthStateChanged(u => {
+        if(u) {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('h-panel').style.display = 'block';
+            document.getElementById('c-panel').style.display = 'block';
+            fetchData();
+        }
+    });
+
+    async function fetchData() {
+        try {
+            // Načtení uživatelů i aktivit najednou
+            const [uSnap, tSnap] = await Promise.all([
+                db.collection("uzivatele").get(),
+                db.collection("aktivity").get()
+            ]);
+
+            let uMap = {};
+            // Inicializace mapy uživatelů
+            uSnap.forEach(doc => { 
+                uMap[doc.id] = { id: doc.id, email: doc.data().email, tracks: [], total: 0, points: 0 }; 
+            });
+
+            // Přidělení aktivit k uživatelům
+            tSnap.forEach(doc => {
+                const t = doc.data();
+                if (uMap[t.uid]) {
+                    uMap[t.uid].tracks.push({ id: doc.id, ...t });
+                    uMap[t.uid].total += parseFloat(t.vzdalenost || 0);
+                    uMap[t.uid].points += parseInt(t.body || 0);
+                }
+            });
+
+            allUsers = Object.values(uMap);
+            
+            // Globální statistiky
+            const globalKm = allUsers.reduce((sum, u) => sum + u.total, 0);
+            document.getElementById('total-km-sum').innerText = globalKm.toFixed(1);
+            document.getElementById('total-users-sum').innerText = allUsers.length;
+
+            render();
+        } catch(e) { console.error(e); }
+    }
+
+    function render() {
+        const sTerm = document.getElementById('search').value.toLowerCase();
+        const sOrder = document.getElementById('sort').value;
+        const list = document.getElementById('user-list');
+        list.innerHTML = "";
+
+        let filtered = allUsers.filter(u => u.email.toLowerCase().includes(sTerm));
+        
+        if(sOrder === 'max') filtered.sort((a,b) => b.total - a.total);
+        else filtered.sort((a,b) => a.email.localeCompare(b.email));
+
+        if(filtered.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#64748b;'>Žádný uživatel nebyl nalezen.</p>";
+            return;
+        }
+
+        filtered.forEach(u => {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            card.innerHTML = `
+                <div class="u-header">
+                    <div class="u-info">
+                        <div class="u-mail">${u.email}</div>
+                        <div class="u-id">ID: ${u.id}</div>
+                    </div>
+                    <div class="u-total">
+                        <div class="u-km">${u.total.toFixed(2)}</div>
+                        <div class="u-pts">KM CELKEM</div>
+                    </div>
+                </div>
+                
+                <div class="track-grid">
+                    ${u.tracks.length > 0 ? 
+                        u.tracks.slice(0, 3).map(t => `
+                            <div class="track-item">
+                                <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                                    <b><i class="fas fa-route"></i> ${t.vzdalenost} km</b>
+                                    <span style="color:#64748b;">${t.datum ? new Date(t.datum.seconds * 1000).toLocaleDateString() : 'Dnes'}</span>
+                                </div>
+                                <div id="map-${t.id}" class="mini-map"></div>
+                            </div>
+                        `).join('') : 
+                        '<p style="color:#64748b; font-size:0.8rem; text-align:center;">Zatím žádné aktivity</p>'
+                    }
+                </div>
+
+                <div style="margin-top:20px;">
+                    <button class="btn btn-reset" onclick="sendReset('${u.email}')">
+                        <i class="fas fa-key" style="margin-right:8px;"></i>ZASLAT RESET HESLA
+                    </button>
+                </div>
+            `;
+            list.appendChild(card);
+
+            // Inicializace mini map
+            u.tracks.slice(0, 3).forEach(t => {
+                setTimeout(() => {
+                    const m = L.map(`map-${t.id}`, {
+                        zoomControl:false, 
+                        attributionControl:false,
+                        dragging: false,
+                        scrollWheelZoom: false
+                    }).setView([50,14], 13);
+                    
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(m);
+                    
+                    try {
+                        const pts = JSON.parse(t.trasa || "[]");
+                        if(pts.length > 0) {
+                            const poly = L.polyline(pts, {color: '#10b981', weight: 4}).addTo(m);
+                            m.fitBounds(poly.getBounds(), {padding:[10,10]});
+                        }
+                    } catch(e){}
+                }, 500);
+            });
+        });
+    }
+
+    function sendReset(email) {
+        if(confirm("Opravdu chcete uživateli " + email + " poslat e-mail pro obnovu hesla?")) {
+            auth.sendPasswordResetEmail(email)
+                .then(() => alert("E-mail byl odeslán."))
+                .catch(e => alert("Chyba: " + e.message));
+        }
+    }
+</script>
+</body>
+</html>
