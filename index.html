@@ -177,7 +177,24 @@
     async function handleAuth() {
         const e = document.getElementById('a-email').value, p = document.getElementById('a-pass').value;
         if(!e || !p) return alert("Vyplňte e-mail a heslo");
-        try { isReg ? await auth.createUserWithEmailAndPassword(e, p) : await auth.signInWithEmailAndPassword(e, p); }
+        
+        try {
+            if (isReg) {
+                // REGISTRACE
+                const userCredential = await auth.createUserWithEmailAndPassword(e, p);
+                const newUser = userCredential.user;
+                
+                // AUTOMATICKÝ ZÁPIS DO KOLEKCE "uzivatele"
+                await db.collection("uzivatele").doc(newUser.uid).set({
+                    email: newUser.email,
+                    vytvoreno: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log("Uživatel úspěšně zaregistrován a přidán do Firestore.");
+            } else {
+                // PŘIHLÁŠENÍ
+                await auth.signInWithEmailAndPassword(e, p);
+            }
+        }
         catch (err) { alert(err.message); }
     }
 
@@ -318,6 +335,8 @@
         if(!newMail) return;
         try {
             await user.updateEmail(newMail);
+            // Aktualizace i ve Firestore dokumentu "uzivatele"
+            await db.collection("uzivatele").doc(user.uid).update({ email: newMail });
             alert("E-mail byl úspěšně změněn.");
             location.reload();
         } catch(e) { alert("Chyba: " + e.message + " (Pravděpodobně se musíte znovu přihlásit)"); }
